@@ -1,13 +1,20 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
-const PORT = 3000;
 const routes = require('./routes/routes')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 app.use(bodyParser.json())
 app.use('/', routes)
 
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = encodeURIComponent(process.env.DB_PASSWORD);
 
-app.listen(PORT, () => {
-    console.log(`Server running at PORT ${PORT}`)
-});
+mongoose
+    .connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@bookdirectory.rvkqd.mongodb.net/library?retryWrites=true&w=majority`)
+    .then(() => {
+        console.log(`Connected to MongoDB!!`)
+        app.listen(process.env.PORT);
+    })
+    .catch(err => console.log(err));
